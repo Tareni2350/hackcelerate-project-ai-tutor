@@ -38,7 +38,7 @@ export default function HomePage() {
   return (
     <div className="container mx-auto py-8">
       <header className="mb-12 text-center">
-        <h1 className="text-5xl font-bold text-primary mb-4">Welcome to EduAI</h1>
+        <h1 className="text-5xl font-bold text-primary mb-4">Welcome To AI Tutor</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Your personal AI-powered tutor, designed to make learning interactive, personalized, and effective.
         </p>

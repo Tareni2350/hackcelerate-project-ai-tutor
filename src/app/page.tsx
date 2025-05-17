@@ -31,8 +31,8 @@ export default function HomePage() {
       title: "Instant Photo Solver",
       description: "Stuck on a textbook problem? Snap a photo and get immediate, step-by-step explanations from your AI tutor.",
       icon: <Camera className="h-8 w-8 text-primary" />,
-      link: "#", // Placeholder link for a future page
-      cta: "Snap & Solve (Coming Soon)"
+      link: "/photo-solver", 
+      cta: "Snap & Solve"
     }
   ];
 

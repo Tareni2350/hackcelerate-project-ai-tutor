@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'EduAI - Personalized Tutor',
-  description: 'AI-Powered Personalized Tutor by Firebase Studio',
+  title: 'AI Tutor - Personalized Learning',
+  description: 'Your AI-Powered Personalized Tutor',
 };
 
 export default function RootLayout({

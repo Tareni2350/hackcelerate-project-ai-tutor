@@ -66,7 +66,7 @@ export default function HomePage() {
       </div>
 
       <footer className="mt-16 text-center text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} EduAI. Revolutionizing education with AI.</p>
+        <p>&copy; {new Date().getFullYear()} AI Tutor. Revolutionizing education with AI.</p>
       </footer>
     </div>
   );

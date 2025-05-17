@@ -1,4 +1,4 @@
-# **App Name**: EduAI
+# **App Name**: AI TUTOR
 
 ## Core Features:
 

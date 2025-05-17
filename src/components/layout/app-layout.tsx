@@ -16,7 +16,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <SidebarHeader className="p-4">
           <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-primary">
             <BookOpenText className="h-7 w-7 text-accent" />
-            <span className="group-data-[collapsible=icon]:hidden">EduAI</span>
+            <span className="group-data-[collapsible=icon]:hidden">AI Tutor</span>
           </Link>
         </SidebarHeader>
         <SidebarContent>
@@ -29,7 +29,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <SidebarInset className="flex flex-col">
         <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm">
           <SidebarTrigger className="md:hidden" />
-          <h1 className="text-xl font-semibold text-foreground">EduAI Tutor</h1>
+          <h1 className="text-xl font-semibold text-foreground">AI Tutor</h1>
         </header>
         <main className="flex-1 overflow-auto p-6">
           {children}

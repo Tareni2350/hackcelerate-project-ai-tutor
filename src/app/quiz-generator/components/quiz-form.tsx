@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -7,7 +8,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel as ShadcnFormLabel, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label"; // Added generic Label
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2, Sparkles, CheckCircle, XCircle } from "lucide-react";
@@ -94,7 +96,7 @@ export function QuizForm() {
             name="topic"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quiz Topic</FormLabel>
+                <ShadcnFormLabel>Quiz Topic</ShadcnFormLabel>
                 <FormControl>
                   <Input placeholder="e.g., World History, Basic Algebra" {...field} />
                 </FormControl>
@@ -109,7 +111,7 @@ export function QuizForm() {
               name="learningProgress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Learning Progress</FormLabel>
+                  <ShadcnFormLabel>Learning Progress</ShadcnFormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -134,7 +136,7 @@ export function QuizForm() {
               name="numQuestions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Number of Questions</FormLabel>
+                  <ShadcnFormLabel>Number of Questions</ShadcnFormLabel>
                   <FormControl>
                     <Input type="number" min="1" max="10" {...field} />
                   </FormControl>
@@ -178,22 +180,26 @@ export function QuizForm() {
                   disabled={submitted}
                   className="space-y-2"
                 >
-                  {q.options.map((option, optIndex) => (
-                    <FormItem key={optIndex} className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value={option} />
-                      </FormControl>
-                      <FormLabel className={`font-normal cursor-pointer ${
-                        submitted && option === q.correctAnswer ? 'text-green-600 font-semibold' : ''
-                      } ${
-                        submitted && userAnswers[index] === option && option !== q.correctAnswer ? 'text-red-600 line-through' : ''
-                      }`}>
-                        {option}
-                        {submitted && option === q.correctAnswer && <CheckCircle className="inline ml-2 h-4 w-4 text-green-600" />}
-                        {submitted && userAnswers[index] === option && option !== q.correctAnswer && <XCircle className="inline ml-2 h-4 w-4 text-red-600" />}
-                      </FormLabel>
-                    </FormItem>
-                  ))}
+                  {q.options.map((option, optIndex) => {
+                    const optionId = `q${index}-option-${optIndex}`;
+                    return (
+                      <div key={optIndex} className="flex items-center space-x-3 space-y-0">
+                        <RadioGroupItem value={option} id={optionId} />
+                        <Label
+                          htmlFor={optionId}
+                          className={`font-normal cursor-pointer ${
+                            submitted && option === q.correctAnswer ? 'text-green-600 font-semibold' : ''
+                          } ${
+                            submitted && userAnswers[index] === option && option !== q.correctAnswer ? 'text-red-600 line-through' : ''
+                          }`}
+                        >
+                          {option}
+                          {submitted && option === q.correctAnswer && <CheckCircle className="inline ml-2 h-4 w-4 text-green-600" />}
+                          {submitted && userAnswers[index] === option && option !== q.correctAnswer && <XCircle className="inline ml-2 h-4 w-4 text-red-600" />}
+                        </Label>
+                      </div>
+                    );
+                  })}
                 </RadioGroup>
               </CardContent>
               {submitted && (
@@ -217,3 +223,5 @@ export function QuizForm() {
     </div>
   );
 }
+
+    

@@ -39,8 +39,8 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI tutor who explains concepts in a natural, human-like voice. 
 
   The student is currently feeling: {{studentMood}}
-
-  Explain the following concept: {{{concept}}}.',
+ 
+  Explain the following concept: {{{concept}}}.`
 });
 
 const generateHumanLikeVoiceExplanationFlow = ai.defineFlow(

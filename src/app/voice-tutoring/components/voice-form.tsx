@@ -1,0 +1,145 @@
+"use client";
+
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, Mic } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { getVoiceExplanationAction } from "@/lib/actions";
+import type { GenerateHumanLikeVoiceExplanationOutput } from "@/ai/flows/generate-human-like-voice-explanation";
+
+const moods = ["Neutral", "Curious", "Stressed", "Confused", "Excited"] as const;
+
+const formSchema = z.object({
+  concept: z.string().min(3, { message: "Concept must be at least 3 characters long." }).max(200),
+  studentMood: z.enum(moods).optional(),
+});
+
+type VoiceFormValues = z.infer<typeof formSchema>;
+
+export function VoiceForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [explanation, setExplanation] = useState<GenerateHumanLikeVoiceExplanationOutput | null>(null);
+  const { toast } = useToast();
+
+  const form = useForm<VoiceFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      concept: "",
+      studentMood: "Neutral",
+    },
+  });
+
+  const onSubmit: SubmitHandler<VoiceFormValues> = async (data) => {
+    setIsLoading(true);
+    setExplanation(null);
+    try {
+      const result = await getVoiceExplanationAction(data);
+      setExplanation(result);
+      toast({
+        title: "Voice Explanation Generated",
+        description: "The AI has prepared a voice explanation (shown as text).",
+      });
+    } catch (error) {
+      console.error("Voice explanation error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate voice explanation. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="concept"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Concept to Explain</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., The Water Cycle, Newton's Laws of Motion" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Enter the concept you want the AI to explain.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="studentMood"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Your Current Mood (Optional)</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your mood" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {moods.map((mood) => (
+                      <SelectItem key={mood} value={mood}>
+                        {mood}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  The AI will try to adjust its tone based on your mood.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Mic className="mr-2 h-4 w-4" />
+            )}
+            Generate Explanation
+          </Button>
+        </form>
+      </Form>
+
+      {isLoading && (
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="ml-2 text-muted-foreground">Generating voice explanation...</p>
+        </div>
+      )}
+
+      {explanation && (
+        <Card className="mt-8 shadow-md bg-background/70">
+          <CardHeader>
+            <CardTitle className="text-xl text-primary flex items-center">
+              <Mic className="mr-2 h-5 w-5" /> AI Voice Explanation (Text)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-sm sm:prose-base max-w-none dark:prose-invert whitespace-pre-wrap">
+              {explanation.explanation}
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground italic">
+              (Imagine this being read out in a natural, human-like voice!)
+            </p>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

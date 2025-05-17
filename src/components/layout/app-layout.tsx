@@ -1,9 +1,9 @@
+
 "use client"; 
 import type { ReactNode } from 'react';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import { SidebarNav } from './sidebar-nav';
-import Link from 'next/link';
-import { BookOpenText } from 'lucide-react';
+import { SidebarHomeLink } from './sidebar-home-link'; // Import the new component
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -14,10 +14,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider defaultOpen>
       <Sidebar className="border-r" collapsible="icon">
         <SidebarHeader className="p-4">
-          <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-primary">
-            <BookOpenText className="h-7 w-7 text-accent" />
-            <span className="group-data-[collapsible=icon]:hidden">AI Tutor</span>
-          </Link>
+          <SidebarHomeLink /> {/* Use the new component here */}
         </SidebarHeader>
         <SidebarContent>
           <SidebarNav />

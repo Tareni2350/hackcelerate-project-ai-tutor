@@ -1,10 +1,11 @@
+
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Brain, Volume2, Lightbulb, Archive, Icon } from 'lucide-react';
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '@/components/ui/sidebar'; // Import useSidebar
+import { LayoutDashboard, Brain, Volume2, Lightbulb, Archive, type Icon } from 'lucide-react'; // Added type to Icon import
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,11 +17,18 @@ const navItems = [
 
 export function SidebarNav() {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar(); // Get sidebar context
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false); // Close sidebar on mobile
+    }
+  };
 
   return (
     <SidebarMenu>
       {navItems.map((item) => {
-        const IconComponent = item.icon as Icon;
+        const IconComponent = item.icon as Icon; // Cast to Icon type
         return (
           <SidebarMenuItem key={item.href}>
             <Link href={item.href} legacyBehavior passHref>
@@ -28,6 +36,7 @@ export function SidebarNav() {
                 asChild
                 isActive={pathname === item.href}
                 tooltip={{ children: item.label, className: "bg-card text-card-foreground border-border shadow-sm" }}
+                onClick={handleLinkClick} // Add onClick handler
               >
                 <a>
                   <IconComponent className="h-5 w-5" />

@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Mic } from "lucide-react";
+import { Loader2, Mic, Play, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getVoiceExplanationAction } from "@/lib/actions";
 import type { GenerateHumanLikeVoiceExplanationOutput } from "@/ai/flows/generate-human-like-voice-explanation";
@@ -26,6 +27,8 @@ type VoiceFormValues = z.infer<typeof formSchema>;
 export function VoiceForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [explanation, setExplanation] = useState<GenerateHumanLikeVoiceExplanationOutput | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speechSynthesisSupported, setSpeechSynthesisSupported] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<VoiceFormValues>({
@@ -36,15 +39,31 @@ export function VoiceForm() {
     },
   });
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      setSpeechSynthesisSupported(true);
+    }
+    // Cleanup speech synthesis on component unmount
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   const onSubmit: SubmitHandler<VoiceFormValues> = async (data) => {
     setIsLoading(true);
     setExplanation(null);
+    if (isSpeaking && typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
     try {
       const result = await getVoiceExplanationAction(data);
       setExplanation(result);
       toast({
         title: "Voice Explanation Generated",
-        description: "The AI has prepared a voice explanation (shown as text).",
+        description: "The AI has prepared an explanation.",
       });
     } catch (error) {
       console.error("Voice explanation error:", error);
@@ -57,6 +76,30 @@ export function VoiceForm() {
       setIsLoading(false);
     }
   };
+
+  const handlePlayExplanation = useCallback(() => {
+    if (!explanation || !speechSynthesisSupported || typeof window === 'undefined' || !window.speechSynthesis) return;
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(explanation.explanation);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      toast({
+        title: "Speech Error",
+        description: "Could not play the voice explanation.",
+        variant: "destructive",
+      });
+    };
+    window.speechSynthesis.speak(utterance);
+  }, [explanation, speechSynthesisSupported, isSpeaking, toast]);
+
 
   return (
     <div className="space-y-6">
@@ -116,10 +159,10 @@ export function VoiceForm() {
         </form>
       </Form>
 
-      {isLoading && (
+      {isLoading && !explanation && (
         <div className="flex justify-center items-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="ml-2 text-muted-foreground">Generating voice explanation...</p>
+          <p className="ml-2 text-muted-foreground">Generating explanation...</p>
         </div>
       )}
 
@@ -127,16 +170,36 @@ export function VoiceForm() {
         <Card className="mt-8 shadow-md bg-background/70">
           <CardHeader>
             <CardTitle className="text-xl text-primary flex items-center">
-              <Mic className="mr-2 h-5 w-5" /> AI Voice Explanation (Text)
+              <Mic className="mr-2 h-5 w-5" /> AI Explanation
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="prose prose-sm sm:prose-base max-w-none dark:prose-invert whitespace-pre-wrap">
               {explanation.explanation}
             </div>
-            <p className="mt-4 text-sm text-muted-foreground italic">
-              (Imagine this being read out in a natural, human-like voice!)
-            </p>
+            {speechSynthesisSupported && (
+              <Button
+                onClick={handlePlayExplanation}
+                disabled={isLoading}
+                variant="outline"
+                className="mt-4"
+              >
+                {isSpeaking ? (
+                  <>
+                    <VolumeX className="mr-2 h-4 w-4" /> Stop Listening
+                  </>
+                ) : (
+                  <>
+                    <Play className="mr-2 h-4 w-4" /> Listen to Explanation
+                  </>
+                )}
+              </Button>
+            )}
+             {!speechSynthesisSupported && typeof window !== 'undefined' && (
+              <p className="mt-4 text-sm text-muted-foreground italic">
+                Your browser does not support speech synthesis for voice playback.
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

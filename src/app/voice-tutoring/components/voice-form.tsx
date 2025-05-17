@@ -43,9 +43,9 @@ export function VoiceForm() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       setSpeechSynthesisSupported(true);
     }
-    // Cleanup speech synthesis on component unmount
+    // Global cleanup for speech synthesis on component unmount
     return () => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
+      if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
       }
     };
@@ -53,8 +53,9 @@ export function VoiceForm() {
 
   const onSubmit: SubmitHandler<VoiceFormValues> = async (data) => {
     setIsLoading(true);
-    setExplanation(null);
-    if (isSpeaking && typeof window !== 'undefined' && window.speechSynthesis) {
+    setExplanation(null); // Clear previous explanation
+    // Stop any ongoing speech before generating new one
+    if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
     }
@@ -77,8 +78,43 @@ export function VoiceForm() {
     }
   };
 
+  // Effect for automatic playback when a new explanation is set
+  useEffect(() => {
+    if (explanation && explanation.explanation && speechSynthesisSupported && typeof window !== 'undefined' && window.speechSynthesis) {
+      // Cancel any previous speech first
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+
+      const utterance = new SpeechSynthesisUtterance(explanation.explanation);
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error during auto-play:', event.error);
+        setIsSpeaking(false);
+        toast({
+          title: "Speech Error",
+          description: "Could not auto-play the voice explanation.",
+          variant: "destructive",
+        });
+      };
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Cleanup: if the explanation changes or component unmounts while speaking, stop it.
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
+        // Check speaking specifically because an utterance might have been created but not yet spoken
+        // or already finished.
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false); 
+      }
+    };
+  }, [explanation, speechSynthesisSupported, toast]);
+
+
   const handlePlayExplanation = useCallback(() => {
-    if (!explanation || !speechSynthesisSupported || typeof window === 'undefined' || !window.speechSynthesis) return;
+    if (!explanation || !explanation.explanation || !speechSynthesisSupported || typeof window === 'undefined' || !window.speechSynthesis) return;
 
     if (isSpeaking) {
       window.speechSynthesis.cancel();
@@ -89,7 +125,8 @@ export function VoiceForm() {
     const utterance = new SpeechSynthesisUtterance(explanation.explanation);
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => {
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error on manual play:', event.error);
       setIsSpeaking(false);
       toast({
         title: "Speech Error",
@@ -180,7 +217,7 @@ export function VoiceForm() {
             {speechSynthesisSupported && (
               <Button
                 onClick={handlePlayExplanation}
-                disabled={isLoading}
+                disabled={isLoading || !explanation.explanation} // Disable if no explanation text
                 variant="outline"
                 className="mt-4"
               >

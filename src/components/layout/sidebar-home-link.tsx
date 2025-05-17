@@ -17,9 +17,9 @@ export function SidebarHomeLink() {
     <Link 
       href="/" 
       onClick={handleClick} 
-      className="flex items-center gap-2 text-lg font-semibold text-[hsl(210_100%_65%)] dark:text-[hsl(200_90%_75%)]"
+      className="flex items-center gap-2 text-lg font-semibold text-accent" // Use theme's accent color for text
     >
-      <BookOpenText className="h-7 w-7 text-[hsl(355_79%_60%)] dark:text-[hsl(350_80%_70%)]" />
+      <BookOpenText className="h-7 w-7 text-accent" /> {/* Use theme's accent color for icon */}
       <span className="group-data-[collapsible=icon]:hidden">AI Tutor</span>
     </Link>
   );

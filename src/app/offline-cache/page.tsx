@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Archive, BookOpen, Sigma, Atom, Leaf, Globe, BookText, Move, Landmark, Binary } from "lucide-react";
+import { Archive, BookOpen, Sigma, Atom, Leaf, Globe, BookText, Move, Landmark, Binary, InfinityIcon, TrendingUp, Library } from "lucide-react";
 
 interface OfflineResource {
   id: string;
@@ -119,6 +119,48 @@ const offlineResources: OfflineResource[] = [
       "Hash Tables (Basics)",
     ],
   },
+  {
+    id: "big-o-notation",
+    title: "Big O Notation",
+    description: "Understanding algorithmic complexity and efficiency.",
+    category: "Computer Science",
+    icon: <InfinityIcon className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "O(1) - Constant Time",
+      "O(log n) - Logarithmic Time",
+      "O(n) - Linear Time",
+      "O(n log n) - Linearithmic Time",
+      "O(n²) - Quadratic Time",
+    ],
+  },
+  {
+    id: "supply-and-demand",
+    title: "Supply and Demand",
+    description: "Core concepts of market economics.",
+    category: "Economics",
+    icon: <TrendingUp className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "Demand Curve",
+      "Supply Curve",
+      "Market Equilibrium",
+      "Price Elasticity",
+      "Shifts in Supply/Demand",
+    ],
+  },
+  {
+    id: "literary-genres",
+    title: "Literary Genres",
+    description: "Categories of literary composition.",
+    category: "Literature",
+    icon: <Library className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "Fiction (Novel, Short Story)",
+      "Non-Fiction (Biography, Essay)",
+      "Poetry (Lyric, Narrative, Epic)",
+      "Drama (Tragedy, Comedy)",
+      "Fantasy & Science Fiction",
+    ],
+  },
 ];
 
 export default function OfflineCachePage() {
@@ -159,7 +201,7 @@ export default function OfflineCachePage() {
         ))}
       </div>
        <p className="text-center text-muted-foreground mt-8 italic">
-        Note: This page displays sample offline content. The content itself is part of the application code. For true offline access (e.g., loading this page without an internet connection after the first visit), a Progressive Web App (PWA) setup with service workers would be required.
+        Note: This page displays sample offline content. The content itself is part of the application code. For true offline access (e.g., loading this page without an internet connection after the first visit), a Progressive Web App (PWA) setup with service workers is required and has been initiated. Ensure you visit this page online once for it to be cached.
       </p>
     </div>
   );

@@ -3,10 +3,10 @@ const CACHE_NAME = 'ai-tutor-cache-v2'; // Incremented version
 const PRECACHE_URLS = [
   '/',
   '/offline-cache',
-  // Specific JS/CSS bundles are hard to pre-cache without build manifest integration.
-  // The fetch handler will cache them on first load.
+  // Add any other critical static assets you want to pre-cache here
+  // e.g., '/_next/static/css/...'
+  // '/_next/static/js/...'
 ];
-
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -26,7 +26,6 @@ self.addEventListener('install', (event) => {
       }) // Activate worker immediately
   );
 });
-
 self.addEventListener('activate', (event) => {
   // Clean up old caches
   event.waitUntil(
@@ -45,10 +44,8 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
-
 self.addEventListener('fetch', (event) => {
-  // We only want to cache GET requests.
-  if (event.request.method !== 'GET') {
+  if (event.request.method !== 'GET' || event.request.url.startsWith('chrome-extension://')) {
     return; // Do not intercept non-GET requests
   }
 

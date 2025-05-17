@@ -90,13 +90,17 @@ export function VoiceForm() {
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = (event) => {
-        console.error('Speech synthesis error during auto-play:', event.error);
         setIsSpeaking(false);
-        toast({
-          title: "Speech Error",
-          description: "Could not auto-play the voice explanation.",
-          variant: "destructive",
-        });
+        if (event.error === 'interrupted') {
+          console.info('Speech synthesis for auto-play was interrupted.', event);
+        } else {
+          console.error('Speech synthesis error during auto-play:', event.error, event);
+          toast({
+            title: "Speech Playback Error",
+            description: `Could not auto-play: ${event.error || 'Unknown error'}`,
+            variant: "destructive",
+          });
+        }
       };
       window.speechSynthesis.speak(utterance);
     }
@@ -104,8 +108,6 @@ export function VoiceForm() {
     // Cleanup: if the explanation changes or component unmounts while speaking, stop it.
     return () => {
       if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
-        // Check speaking specifically because an utterance might have been created but not yet spoken
-        // or already finished.
         window.speechSynthesis.cancel();
         setIsSpeaking(false); 
       }
@@ -126,13 +128,17 @@ export function VoiceForm() {
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = (event) => {
-      console.error('Speech synthesis error on manual play:', event.error);
       setIsSpeaking(false);
-      toast({
-        title: "Speech Error",
-        description: "Could not play the voice explanation.",
-        variant: "destructive",
-      });
+      if (event.error === 'interrupted') {
+        console.info('Speech synthesis for manual play was interrupted.', event);
+      } else {
+        console.error('Speech synthesis error on manual play:', event.error, event);
+        toast({
+          title: "Speech Playback Error",
+          description: `Could not play: ${event.error || 'Unknown error'}`,
+          variant: "destructive",
+        });
+      }
     };
     window.speechSynthesis.speak(utterance);
   }, [explanation, speechSynthesisSupported, isSpeaking, toast]);

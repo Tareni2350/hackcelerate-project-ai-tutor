@@ -1,37 +1,38 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Lightbulb, Archive } from "lucide-react";
+import { Brain, Volume2, Gamepad2, Camera } from "lucide-react";
 
 export default function HomePage() {
   const features = [
     {
-      title: "RAG-Powered Tutoring",
-      description: "Get instant, customized explanations using advanced Retrieval-Augmented Generation.",
+      title: "Interactive RAG Explanations",
+      description: "Our AI uses Retrieval-Augmented Generation to pull relevant info from your learning materials, providing explanations tailored to your understanding.",
       icon: <Brain className="h-8 w-8 text-primary" />,
       link: "/rag-tutoring",
       cta: "Explore RAG Tutor"
     },
     {
-      title: "Voice-Based Tutoring",
-      description: "Listen to explanations in a natural, human-like tone, sensitive to your mood.",
+      title: "Empathetic Voice Tutor",
+      description: "Learn through natural, human-like voice explanations that adapt to your mood, offering encouragement to keep you motivated.",
       icon: <Volume2 className="h-8 w-8 text-primary" />,
       link: "/voice-tutoring",
       cta: "Try Voice Tutor"
     },
     {
-      title: "Gamified Learning Path",
-      description: "Custom quizzes tailored to your progress, making learning engaging.",
-      icon: <Lightbulb className="h-8 w-8 text-primary" />,
+      title: "Gamified Quiz Challenges",
+      description: "Test your knowledge with custom quizzes, track your progress, and stay motivated with an engaging, game-like learning experience.",
+      icon: <Gamepad2 className="h-8 w-8 text-primary" />,
       link: "/quiz-generator",
-      cta: "Generate a Quiz"
+      cta: "Take a Quiz Challenge"
     },
     {
-      title: "Offline Knowledge Cache",
-      description: "Access key educational content and examples even without an internet connection.",
-      icon: <Archive className="h-8 w-8 text-primary" />,
-      link: "/offline-cache",
-      cta: "View Offline Content"
+      title: "Instant Photo Solver",
+      description: "Stuck on a textbook problem? Snap a photo and get immediate, step-by-step explanations from your AI tutor.",
+      icon: <Camera className="h-8 w-8 text-primary" />,
+      link: "#", // Placeholder link for a future page
+      cta: "Snap & Solve (Coming Soon)"
     }
   ];
 

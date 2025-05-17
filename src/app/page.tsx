@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera } from "lucide-react";
+import { Brain, Volume2, Gamepad2, Camera, Archive } from "lucide-react";
 
 export default function HomePage() {
   const features = [
@@ -33,6 +33,13 @@ export default function HomePage() {
       icon: <Camera className="h-8 w-8 text-primary" />,
       link: "/photo-solver", 
       cta: "Snap & Solve"
+    },
+    {
+      title: "Offline Learning Access",
+      description: "Access key educational content and solved examples even without an internet connection, ensuring your learning never stops.",
+      icon: <Archive className="h-8 w-8 text-primary" />,
+      link: "/offline-cache",
+      cta: "Explore Offline Cache"
     }
   ];
 

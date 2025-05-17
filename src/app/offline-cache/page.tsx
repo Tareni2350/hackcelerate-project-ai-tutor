@@ -1,5 +1,6 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Archive, BookOpen, Sigma, Atom, Leaf, Globe } from "lucide-react";
+import { Archive, BookOpen, Sigma, Atom, Leaf, Globe, BookText, Move, Landmark, Binary } from "lucide-react";
 
 interface OfflineResource {
   id: string;
@@ -64,6 +65,60 @@ const offlineResources: OfflineResource[] = [
       "Beijing (China)",
     ],
   },
+  {
+    id: "literary-devices",
+    title: "Key Literary Devices",
+    description: "Common techniques used in literature to produce specific effects.",
+    category: "Literature",
+    icon: <BookText className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "Metaphor & Simile",
+      "Personification",
+      "Irony (Verbal, Situational, Dramatic)",
+      "Foreshadowing",
+      "Symbolism",
+    ],
+  },
+  {
+    id: "newtons-laws",
+    title: "Newton's Laws of Motion",
+    description: "Three fundamental laws describing the relationship between a body and the forces acting upon it.",
+    category: "Physics",
+    icon: <Move className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "First Law: Inertia",
+      "Second Law: F = ma (Force = mass x acceleration)",
+      "Third Law: Action and Reaction",
+      "Applications in everyday life",
+    ],
+  },
+  {
+    id: "french-revolution",
+    title: "The French Revolution - Key Events",
+    description: "A brief overview of major turning points in the French Revolution.",
+    category: "History",
+    icon: <Landmark className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "Storming of the Bastille (1789)",
+      "Declaration of the Rights of Man and of the Citizen",
+      "Reign of Terror (1793-1794)",
+      "Rise of Napoleon Bonaparte",
+    ],
+  },
+  {
+    id: "basic-data-structures",
+    title: "Basic Data Structures",
+    description: "Fundamental ways of organizing and storing data in computer science.",
+    category: "Computer Science",
+    icon: <Binary className="h-8 w-8 text-primary" />,
+    contentSummary: [
+      "Arrays",
+      "Linked Lists",
+      "Stacks & Queues",
+      "Trees (Basics)",
+      "Hash Tables (Basics)",
+    ],
+  },
 ];
 
 export default function OfflineCachePage() {
@@ -74,7 +129,7 @@ export default function OfflineCachePage() {
         <div>
           <h1 className="text-3xl font-bold">Offline Knowledge Cache</h1>
           <p className="text-muted-foreground">
-            Access key educational content and solved examples even without an internet connection.
+            Access key educational content and solved examples.
           </p>
         </div>
       </header>
@@ -104,7 +159,7 @@ export default function OfflineCachePage() {
         ))}
       </div>
        <p className="text-center text-muted-foreground mt-8 italic">
-        Note: This page demonstrates sample offline content. In a real application, this data would be cached for offline access.
+        Note: This page displays sample offline content. The content itself is part of the application code. For true offline access (e.g., loading this page without an internet connection after the first visit), a Progressive Web App (PWA) setup with service workers would be required.
       </p>
     </div>
   );

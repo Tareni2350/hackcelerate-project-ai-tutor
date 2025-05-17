@@ -64,7 +64,7 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="flex-grow flex items-end">
               <Link href={feature.link} passHref className="w-full">
-                <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary/10">
+                <Button className="w-full mt-4">
                   {feature.cta}
                 </Button>
               </Link>

@@ -1,6 +1,8 @@
+
 // src/lib/actions.ts
 "use server";
 
+import { z } from "zod"; // Added import for Zod
 import { generateExplanationFromRag, type GenerateExplanationFromRagInput, type GenerateExplanationFromRagOutput } from "@/ai/flows/generate-explanation-from-rag";
 import { generateHumanLikeVoiceExplanation, type GenerateHumanLikeVoiceExplanationInput, type GenerateHumanLikeVoiceExplanationOutput } from "@/ai/flows/generate-human-like-voice-explanation";
 import { generateQuizFromTopic, type GenerateQuizFromTopicInput, type GenerateQuizFromTopicOutput } from "@/ai/flows/generate-quiz-from-topic";
@@ -42,4 +44,23 @@ export async function solvePhotoProblemAction(input: SolvePhotoProblemInput): Pr
   try {
     const result = await solvePhotoProblem(input);
     return result;
-  } catch (error)
+  } catch (error) { // Ensured this catch block is complete
+    console.error("Error in solvePhotoProblemAction:", error);
+    throw new Error("Failed to solve photo problem.");
+  }
+}
+
+export async function checkEssayAction(input: CheckEssayInput): Promise<CheckEssayOutput> {
+  try {
+    const result = await checkEssay(input);
+    return result;
+  } catch (error) {
+    console.error("Error in checkEssayAction:", error);
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred while checking the essay.";
+    if (error instanceof z.ZodError) {
+        throw new Error(`Essay validation failed: ${error.errors.map(e => e.message).join(', ')}`);
+    }
+    throw new Error(`Failed to check essay: ${errorMessage}`);
+  }
+}
+

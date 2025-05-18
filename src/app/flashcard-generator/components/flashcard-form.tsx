@@ -9,17 +9,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Added CardDescription
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Loader2, Wand2, RefreshCw, CheckSquare } from "lucide-react"; // Replaced RotateCcw with RefreshCw, CheckSquare
+import { Loader2, Wand2, RefreshCw, CheckSquare, BookCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { generateFlashcardsAction } from "@/lib/actions";
-import type { GenerateFlashcardsOutput, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards-flow"; // Added GenerateFlashcardsInput
+import type { GenerateFlashcardsOutput, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards-flow";
 import { cn } from "@/lib/utils";
 
 const difficultyLevels = ["Basic", "Intermediate", "Advanced"] as const;
 
-// Extend formSchema to match GenerateFlashcardsInput if needed
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Topic must be at least 3 characters." }).max(150, { message: "Topic cannot exceed 150 characters." }),
   numFlashcards: z.coerce.number().min(1, {message: "Must generate at least 1 flashcard."}).max(15, {message: "Cannot generate more than 15 flashcards."}).optional().default(5),
@@ -30,12 +29,13 @@ type FlashcardFormValues = z.infer<typeof formSchema>;
 type Flashcard = GenerateFlashcardsOutput["flashcards"][0];
 
 interface DisplayFlashcard extends Flashcard {
-  uid: string; // Unique ID for client-side rendering and state management
+  uid: string;
 }
 
 export function FlashcardForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [displayedFlashcards, setDisplayedFlashcards] = useState<DisplayFlashcard[]>([]);
+  const [doneFlashcards, setDoneFlashcards] = useState<DisplayFlashcard[]>([]);
   const [activeDialogCard, setActiveDialogCard] = useState<DisplayFlashcard | null>(null);
   const [isDialogCardFlipped, setIsDialogCardFlipped] = useState(false);
   const { toast } = useToast();
@@ -52,7 +52,8 @@ export function FlashcardForm() {
   const onSubmit: SubmitHandler<FlashcardFormValues> = async (data) => {
     setIsLoading(true);
     setDisplayedFlashcards([]);
-    setActiveDialogCard(null); // Close any open dialog
+    setDoneFlashcards([]); // Clear done cards when generating a new set
+    setActiveDialogCard(null);
     try {
       const result = await generateFlashcardsAction(data);
       setDisplayedFlashcards(
@@ -80,7 +81,7 @@ export function FlashcardForm() {
 
   const handleOpenCardInDialog = (card: DisplayFlashcard) => {
     setActiveDialogCard(card);
-    setIsDialogCardFlipped(false); // Reset flip state for the new card in dialog
+    setIsDialogCardFlipped(false);
   };
 
   const handleFlipDialogCard = () => {
@@ -89,6 +90,7 @@ export function FlashcardForm() {
 
   const handleMarkCardAsDone = () => {
     if (activeDialogCard) {
+      setDoneFlashcards((prevDoneCards) => [...prevDoneCards, activeDialogCard]);
       setDisplayedFlashcards((prevCards) =>
         prevCards.filter((card) => card.uid !== activeDialogCard.uid)
       );
@@ -97,7 +99,7 @@ export function FlashcardForm() {
         description: `"${activeDialogCard.front.substring(0,30)}..." marked as done.`,
         duration: 2000,
       });
-      setActiveDialogCard(null); // Close the dialog
+      setActiveDialogCard(null);
     }
   };
 
@@ -227,13 +229,36 @@ export function FlashcardForm() {
           </DialogContent>
         </Dialog>
       )}
+      
       {displayedFlashcards.length === 0 && !isLoading && form.formState.isSubmitted && (
          <div className="mt-8 text-center">
-            <p className="text-lg font-semibold text-muted-foreground">All flashcards studied!</p>
+            <p className="text-lg font-semibold text-muted-foreground">All flashcards studied for this set!</p>
             <Button onClick={() => form.handleSubmit(onSubmit)()} className="mt-4">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Generate New Set
             </Button>
+        </div>
+      )}
+
+      {doneFlashcards.length > 0 && !isLoading && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold text-primary mb-4 flex items-center">
+            <BookCheck className="mr-2 h-6 w-6" /> Reviewed Flashcards
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {doneFlashcards.map((card) => (
+              <Card
+                key={`done-${card.uid}`}
+                className="shadow-sm p-3 bg-card/70 opacity-80"
+                data-ai-hint="reviewed flashcard"
+              >
+                <CardTitle className="text-sm font-medium mb-1 text-foreground/80">Front</CardTitle>
+                <CardContent className="p-0 text-xs text-muted-foreground overflow-auto max-h-20">
+                  {card.front}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       )}
     </div>

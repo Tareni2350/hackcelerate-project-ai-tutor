@@ -56,11 +56,12 @@ export function QuizForm() {
         title: "Quiz Generated!",
         description: `Your quiz on "${data.topic}" is ready.`,
       });
-    } catch (error) {
-      console.error("Quiz generation error:", error);
+    } catch (err) {
+      console.error("Quiz generation error:", err);
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while generating the quiz.";
       toast({
-        title: "Error",
-        description: "Failed to generate quiz. Please try again.",
+        title: "Error Generating Quiz",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

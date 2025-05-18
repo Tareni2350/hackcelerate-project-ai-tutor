@@ -66,11 +66,12 @@ export function VoiceForm() {
         title: "Voice Explanation Generated",
         description: "The AI has prepared an explanation.",
       });
-    } catch (error) {
-      console.error("Voice explanation error:", error);
+    } catch (err) {
+      console.error("Voice explanation error:", err);
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while generating the voice explanation.";
       toast({
-        title: "Error",
-        description: "Failed to generate voice explanation. Please try again.",
+        title: "Error Generating Voice Explanation",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -249,3 +250,4 @@ export function VoiceForm() {
     </div>
   );
 }
+

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -44,11 +45,12 @@ export function RagForm() {
         title: "Explanation Generated",
         description: "The AI has provided an explanation for your concept.",
       });
-    } catch (error) {
-      console.error("RAG explanation error:", error);
+    } catch (err) {
+      console.error("RAG explanation error:", err);
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while generating the explanation.";
       toast({
-        title: "Error",
-        description: "Failed to generate explanation. Please try again.",
+        title: "Error Generating Explanation",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -129,3 +131,4 @@ export function RagForm() {
     </div>
   );
 }
+

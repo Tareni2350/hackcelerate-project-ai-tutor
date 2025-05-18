@@ -9,15 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Wand2, RotateCcw } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Added CardDescription
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Loader2, Wand2, RefreshCw, CheckSquare } from "lucide-react"; // Replaced RotateCcw with RefreshCw, CheckSquare
 import { useToast } from "@/hooks/use-toast";
 import { generateFlashcardsAction } from "@/lib/actions";
-import type { GenerateFlashcardsOutput } from "@/ai/flows/generate-flashcards-flow";
+import type { GenerateFlashcardsOutput, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards-flow"; // Added GenerateFlashcardsInput
 import { cn } from "@/lib/utils";
 
 const difficultyLevels = ["Basic", "Intermediate", "Advanced"] as const;
 
+// Extend formSchema to match GenerateFlashcardsInput if needed
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Topic must be at least 3 characters." }).max(150, { message: "Topic cannot exceed 150 characters." }),
   numFlashcards: z.coerce.number().min(1, {message: "Must generate at least 1 flashcard."}).max(15, {message: "Cannot generate more than 15 flashcards."}).optional().default(5),
@@ -27,14 +29,15 @@ const formSchema = z.object({
 type FlashcardFormValues = z.infer<typeof formSchema>;
 type Flashcard = GenerateFlashcardsOutput["flashcards"][0];
 
-interface FlashcardWithState extends Flashcard {
-  id: string;
-  isFlipped: boolean;
+interface DisplayFlashcard extends Flashcard {
+  uid: string; // Unique ID for client-side rendering and state management
 }
 
 export function FlashcardForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [generatedFlashcards, setGeneratedFlashcards] = useState<FlashcardWithState[]>([]);
+  const [displayedFlashcards, setDisplayedFlashcards] = useState<DisplayFlashcard[]>([]);
+  const [activeDialogCard, setActiveDialogCard] = useState<DisplayFlashcard | null>(null);
+  const [isDialogCardFlipped, setIsDialogCardFlipped] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<FlashcardFormValues>({
@@ -48,14 +51,14 @@ export function FlashcardForm() {
 
   const onSubmit: SubmitHandler<FlashcardFormValues> = async (data) => {
     setIsLoading(true);
-    setGeneratedFlashcards([]);
+    setDisplayedFlashcards([]);
+    setActiveDialogCard(null); // Close any open dialog
     try {
       const result = await generateFlashcardsAction(data);
-      setGeneratedFlashcards(
+      setDisplayedFlashcards(
         result.flashcards.map((card, index) => ({
           ...card,
-          id: `flashcard-${index}-${Date.now()}`, // Unique ID for key prop
-          isFlipped: false,
+          uid: `flashcard-${index}-${Date.now()}`, 
         }))
       );
       toast({
@@ -75,12 +78,27 @@ export function FlashcardForm() {
     }
   };
 
-  const handleFlipCard = (id: string) => {
-    setGeneratedFlashcards((prev) =>
-      prev.map((card) =>
-        card.id === id ? { ...card, isFlipped: !card.isFlipped } : card
-      )
-    );
+  const handleOpenCardInDialog = (card: DisplayFlashcard) => {
+    setActiveDialogCard(card);
+    setIsDialogCardFlipped(false); // Reset flip state for the new card in dialog
+  };
+
+  const handleFlipDialogCard = () => {
+    setIsDialogCardFlipped((prev) => !prev);
+  };
+
+  const handleMarkCardAsDone = () => {
+    if (activeDialogCard) {
+      setDisplayedFlashcards((prevCards) =>
+        prevCards.filter((card) => card.uid !== activeDialogCard.uid)
+      );
+      toast({
+        title: "Card Done!",
+        description: `"${activeDialogCard.front.substring(0,30)}..." marked as done.`,
+        duration: 2000,
+      });
+      setActiveDialogCard(null); // Close the dialog
+    }
   };
 
   return (
@@ -160,69 +178,64 @@ export function FlashcardForm() {
         </div>
       )}
 
-      {generatedFlashcards.length > 0 && !isLoading && (
+      {displayedFlashcards.length > 0 && !isLoading && (
         <div className="mt-8">
           <h2 className="text-2xl font-semibold text-primary mb-4">Your Flashcards</h2>
-          <p className="text-muted-foreground mb-6">Click on a card to flip it and reveal the answer.</p>
+          <p className="text-muted-foreground mb-6">Click on a card to study it. ({displayedFlashcards.length} remaining)</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {generatedFlashcards.map((card) => (
+            {displayedFlashcards.map((card) => (
               <Card
-                key={card.id}
-                onClick={() => handleFlipCard(card.id)}
-                className={cn(
-                  "cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-200 aspect-[3/2] flex flex-col justify-between p-4 relative overflow-hidden",
-                  card.isFlipped ? "bg-secondary/30 dark:bg-secondary/20" : "bg-card"
-                )}
-                data-ai-hint="flashcard"
-                style={{ perspective: '1000px' }}
+                key={card.uid}
+                onClick={() => handleOpenCardInDialog(card)}
+                className="cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-200 aspect-[3/2] flex flex-col justify-center items-center text-center p-4 bg-card overflow-hidden"
+                data-ai-hint="flashcard education"
               >
-                <div
-                  className={cn(
-                    "absolute inset-0 w-full h-full transition-transform duration-500 flex flex-col justify-center items-center text-center p-4 break-words",
-                    "backface-hidden", // Hide back during transition
-                    card.isFlipped ? "rotate-y-180" : ""
-                  )}
-                >
-                  <CardTitle className="text-lg font-medium mb-1">Front</CardTitle>
-                  <CardContent className="p-0 text-sm text-foreground/90 overflow-auto">
-                    {card.front}
-                  </CardContent>
-                </div>
-                <div
-                  className={cn(
-                    "absolute inset-0 w-full h-full transition-transform duration-500 flex flex-col justify-center items-center text-center p-4 break-words",
-                    "backface-hidden", // Hide back during transition
-                    "rotate-y-180", // Initially rotated
-                    card.isFlipped ? "" : "-rotate-y-180" // Flip into view or hide
-                  )}
-                  style={{ transform: card.isFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)' }}
-                >
-                  <CardTitle className="text-lg font-medium mb-1">Back</CardTitle>
-                  <CardContent className="p-0 text-sm text-foreground/80 overflow-auto">
-                     {card.back}
-                  </CardContent>
-                </div>
-                <div className="absolute bottom-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                  <RotateCcw className="h-4 w-4" />
-                </div>
+                <CardTitle className="text-lg font-medium mb-1">Front</CardTitle>
+                <CardContent className="p-0 text-sm text-foreground/90 overflow-auto">
+                  {card.front}
+                </CardContent>
               </Card>
             ))}
           </div>
         </div>
       )}
-      {/* Basic CSS for flip effect - ideally this would be in globals.css or a utility class */}
-      <style jsx global>{`
-        .backface-hidden {
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-        }
-        .rotate-y-180 {
-          transform: rotateY(180deg);
-        }
-        .-rotate-y-180 {
-          transform: rotateY(-180deg);
-        }
-      `}</style>
+
+      {activeDialogCard && (
+        <Dialog open={!!activeDialogCard} onOpenChange={(isOpen) => { if (!isOpen) setActiveDialogCard(null); }}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-primary">
+                Study Flashcard: {isDialogCardFlipped ? "Back" : "Front"}
+              </DialogTitle>
+              <CardDescription>Topic: {form.getValues().topic}</CardDescription>
+            </DialogHeader>
+            <div className="my-4 p-4 min-h-[150px] bg-muted/50 rounded-md flex items-center justify-center text-center">
+              <p className="text-lg">
+                {isDialogCardFlipped ? activeDialogCard.back : activeDialogCard.front}
+              </p>
+            </div>
+            <DialogFooter className="sm:justify-between">
+              <Button variant="outline" onClick={handleFlipDialogCard} className="mb-2 sm:mb-0">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Flip Card
+              </Button>
+              <Button onClick={handleMarkCardAsDone} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <CheckSquare className="mr-2 h-4 w-4" />
+                Mark as Done
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+      {displayedFlashcards.length === 0 && !isLoading && form.formState.isSubmitted && (
+         <div className="mt-8 text-center">
+            <p className="text-lg font-semibold text-muted-foreground">All flashcards studied!</p>
+            <Button onClick={() => form.handleSubmit(onSubmit)()} className="mt-4">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Generate New Set
+            </Button>
+        </div>
+      )}
     </div>
   );
 }

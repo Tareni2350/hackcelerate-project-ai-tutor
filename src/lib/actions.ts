@@ -62,7 +62,8 @@ export async function getRagExplanationAction(input: GenerateExplanationFromRagI
     return result;
   } catch (error) {
     console.error("Error in getRagExplanationAction:", error);
-    throw new Error("Failed to generate RAG explanation.");
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    throw new Error(`Failed to generate RAG explanation. Details: ${errorMessage}`);
   }
 }
 
@@ -73,7 +74,8 @@ export async function getVoiceExplanationAction(input: GenerateHumanLikeVoiceExp
     return result;
   } catch (error) {
     console.error("Error in getVoiceExplanationAction:", error);
-    throw new Error("Failed to generate voice explanation.");
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    throw new Error(`Failed to generate voice explanation. Details: ${errorMessage}`);
   }
 }
 
@@ -84,7 +86,8 @@ export async function generateQuizAction(input: GenerateQuizFromTopicInput): Pro
     return result;
   } catch (error) {
     console.error("Error in generateQuizAction:", error);
-    throw new Error("Failed to generate quiz.");
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    throw new Error(`Failed to generate quiz. Details: ${errorMessage}`);
   }
 }
 
@@ -97,7 +100,8 @@ export async function solvePhotoProblemAction(input: SolvePhotoProblemInput): Pr
     return result;
   } catch (error) {
     console.error("Error in solvePhotoProblemAction:", error);
-    throw new Error("Failed to solve photo problem.");
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    throw new Error(`Failed to solve photo problem. Details: ${errorMessage}`);
   }
 }
 

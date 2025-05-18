@@ -5,7 +5,7 @@ import './globals.css';
 import { AppLayout } from '@/components/layout/app-layout';
 import { Toaster } from "@/components/ui/toaster";
 import { ServiceWorkerRegistrar } from '@/components/layout/service-worker-registrar';
-import { ThemeProvider } from '@/components/theme-provider'; // Added ThemeProvider
+import { ThemeProvider } from '@/components/theme-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,11 +21,11 @@ export const metadata: Metadata = {
   title: 'AI Tutor - Personalized Learning',
   description: 'Your AI-Powered Personalized Tutor',
   manifest: '/manifest.json',
-  themeColor: [ 
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' }, // Updated to match new theme
-    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' },  // Updated to match new theme
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' },
   ],
-  icons: { 
+  icons: {
     icon: 'https://placehold.co/192x192.png?text=AI',
     apple: 'https://placehold.co/180x180.png?text=AI',
   }
@@ -37,19 +37,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* The manifest link is automatically added by Next.js via metadata.manifest */}
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ThemeProvider>
-          <ServiceWorkerRegistrar />
-          <AppLayout>
-            {children}
-          </AppLayout>
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
+    <html lang="en" suppressHydrationWarning><head>{/* The manifest link is automatically added by Next.js via metadata.manifest */}</head><body className={`${geistSans.variable} ${geistMono.variable} antialiased`}><ThemeProvider><ServiceWorkerRegistrar /><AppLayout>{children}</AppLayout><Toaster /></ThemeProvider></body></html>
   );
 }

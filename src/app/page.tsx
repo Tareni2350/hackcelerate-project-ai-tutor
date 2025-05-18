@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera, Archive, FileText } from "lucide-react";
+import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, Layers } from "lucide-react"; // Added Layers
 
 export default function HomePage() {
   const features = [
@@ -26,6 +26,13 @@ export default function HomePage() {
       icon: <Gamepad2 className="h-8 w-8 text-primary" />,
       link: "/quiz-generator",
       cta: "Take a Quiz Challenge"
+    },
+     {
+      title: "Flashcard Generator",
+      description: "Create custom flashcards for any topic to help you memorize key concepts and definitions efficiently.",
+      icon: <Layers className="h-8 w-8 text-primary" />,
+      link: "/flashcard-generator",
+      cta: "Make Flashcards"
     },
     {
       title: "Instant Photo Solver",

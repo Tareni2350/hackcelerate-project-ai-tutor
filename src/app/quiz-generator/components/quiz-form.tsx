@@ -22,7 +22,7 @@ const learningProgressLevels = ["Beginner", "Intermediate", "Advanced"] as const
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Topic must be at least 3 characters long." }).max(100),
   learningProgress: z.enum(learningProgressLevels).optional(),
-  numQuestions: z.coerce.number().min(1, { message: "Must have at least 1 question." }).max(10, { message: "Cannot exceed 10 questions."}),
+  numQuestions: z.coerce.number().min(1, { message: "Must have at least 1 question." }).max(20, { message: "Cannot exceed 20 questions."}),
 });
 
 type QuizFormValues = z.infer<typeof formSchema>;
@@ -139,9 +139,9 @@ export function QuizForm() {
                 <FormItem>
                   <ShadcnFormLabel>Number of Questions</ShadcnFormLabel>
                   <FormControl>
-                    <Input type="number" min="1" max="10" {...field} />
+                    <Input type="number" min="1" max="20" {...field} />
                   </FormControl>
-                  <FormDescription>Between 1 and 10 questions.</FormDescription>
+                  <FormDescription>Between 1 and 20 questions.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

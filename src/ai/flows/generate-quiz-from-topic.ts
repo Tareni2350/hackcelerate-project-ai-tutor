@@ -15,7 +15,7 @@ import {z} from 'genkit';
 const GenerateQuizFromTopicInputSchema = z.object({
   topic: z.string().describe('The topic to generate a quiz for.'),
   learningProgress: z.string().optional().describe('The learning progress of the student. This can be used to tailor the difficulty of the quiz.  For example, "beginner", "intermediate", or "advanced".'),
-  numQuestions: z.number().optional().default(5).describe('The number of questions to generate for the quiz.'),
+  numQuestions: z.number().min(1).max(20).optional().default(5).describe('The number of questions to generate for the quiz.'),
 });
 export type GenerateQuizFromTopicInput = z.infer<typeof GenerateQuizFromTopicInputSchema>;
 
@@ -71,6 +71,9 @@ const generateQuizFromTopicFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await generateQuizFromTopicPrompt(input);
-    return output!;
+    if (!output) {
+        throw new Error('The AI was unable to generate quiz questions.');
+    }
+    return output;
   }
 );

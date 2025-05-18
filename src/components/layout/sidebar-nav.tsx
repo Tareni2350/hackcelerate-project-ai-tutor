@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '@/components/ui/sidebar'; 
-import { LayoutDashboard, Brain, Volume2, Lightbulb, Archive, Camera, type Icon } from 'lucide-react';
+import { LayoutDashboard, Brain, Volume2, Lightbulb, Archive, Camera, FileText, type Icon } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/voice-tutoring', label: 'Voice Tutor', icon: Volume2 },
   { href: '/quiz-generator', label: 'Quiz Generator', icon: Lightbulb },
   { href: '/photo-solver', label: 'Photo Solver', icon: Camera },
+  { href: '/essay-checker', label: 'Essay Checker', icon: FileText },
   { href: '/offline-cache', label: 'Offline Cache', icon: Archive },
 ];
 

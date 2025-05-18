@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera, Archive } from "lucide-react";
+import { Brain, Volume2, Gamepad2, Camera, Archive, FileText } from "lucide-react";
 
 export default function HomePage() {
   const features = [
@@ -35,6 +35,13 @@ export default function HomePage() {
       cta: "Snap & Solve"
     },
     {
+      title: "Essay Checker",
+      description: "Get AI-powered feedback on your essays for grammar, clarity, and paraphrasing opportunities to improve your writing.",
+      icon: <FileText className="h-8 w-8 text-primary" />,
+      link: "/essay-checker",
+      cta: "Review Your Essay"
+    },
+    {
       title: "Offline Learning Access",
       description: "Access key educational content and solved examples even without an internet connection, ensuring your learning never stops.",
       icon: <Archive className="h-8 w-8 text-primary" />,
@@ -52,7 +59,7 @@ export default function HomePage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature) => (
           <Card key={feature.title} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-start gap-4 pb-4">

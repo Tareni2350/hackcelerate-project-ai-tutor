@@ -52,7 +52,7 @@ export function FlashcardForm() {
   const onSubmit: SubmitHandler<FlashcardFormValues> = async (data) => {
     setIsLoading(true);
     setDisplayedFlashcards([]);
-    setDoneFlashcards([]); // Clear done cards when generating a new set
+    setDoneFlashcards([]); 
     setActiveDialogCard(null);
     try {
       const result = await generateFlashcardsAction(data);
@@ -90,7 +90,10 @@ export function FlashcardForm() {
 
   const handleMarkCardAsDone = () => {
     if (activeDialogCard) {
-      setDoneFlashcards((prevDoneCards) => [...prevDoneCards, activeDialogCard]);
+      // Only add to doneFlashcards if it's not already there (though logic implies it comes from displayedFlashcards)
+      if (!doneFlashcards.find(card => card.uid === activeDialogCard.uid)) {
+         setDoneFlashcards((prevDoneCards) => [...prevDoneCards, activeDialogCard]);
+      }
       setDisplayedFlashcards((prevCards) =>
         prevCards.filter((card) => card.uid !== activeDialogCard.uid)
       );
@@ -221,10 +224,19 @@ export function FlashcardForm() {
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Flip Card
               </Button>
-              <Button onClick={handleMarkCardAsDone} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                <CheckSquare className="mr-2 h-4 w-4" />
-                Mark as Done
-              </Button>
+              {/* Only show "Mark as Done" if the card is not already in doneFlashcards */}
+              {!doneFlashcards.find(dc => dc.uid === activeDialogCard.uid) && (
+                 <Button onClick={handleMarkCardAsDone} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <CheckSquare className="mr-2 h-4 w-4" />
+                    Mark as Done
+                </Button>
+              )}
+               {doneFlashcards.find(dc => dc.uid === activeDialogCard.uid) && (
+                 <DialogClose asChild>
+                    <Button variant="outline">Close</Button>
+                 </DialogClose>
+              )}
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -249,7 +261,8 @@ export function FlashcardForm() {
             {doneFlashcards.map((card) => (
               <Card
                 key={`done-${card.uid}`}
-                className="shadow-sm p-3 bg-card/70 opacity-80"
+                onClick={() => handleOpenCardInDialog(card)}
+                className="cursor-pointer shadow-sm p-3 bg-card/70 opacity-80 hover:opacity-100 hover:shadow-md transition-all duration-200"
                 data-ai-hint="reviewed flashcard"
               >
                 <CardTitle className="text-sm font-medium mb-1 text-foreground/80">Front</CardTitle>

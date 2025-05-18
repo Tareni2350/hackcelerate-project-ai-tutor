@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Wand2, AlertCircle, CheckSquare, Edit3 } from "lucide-react";
+import { Loader2, Wand2, AlertCircle, CheckSquare, Edit3, FileSignature } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { checkEssayAction } from "@/lib/actions";
 import type { CheckEssayOutput } from "@/ai/flows/check-essay-flow";
@@ -77,7 +77,7 @@ export function EssayCheckerForm() {
                   />
                 </FormControl>
                 <FormDescription>
-                  The AI will analyze this text for grammar and paraphrasing opportunities.
+                  The AI will analyze this text for grammar, paraphrasing opportunities, and provide a fully revised version.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -156,6 +156,24 @@ export function EssayCheckerForm() {
                     <p className="text-xs text-muted-foreground mt-1">Reason: {item.reason}</p>
                   </Card>
                 ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {feedback.fullyParaphrasedEssay && (
+            <Card className="shadow-md bg-background/70">
+              <CardHeader>
+                <CardTitle className="text-xl text-primary flex items-center">
+                  <FileSignature className="mr-2 h-5 w-5" /> Suggested Full Revision
+                </CardTitle>
+                <CardDescription>
+                  This is a complete, rewritten version of your essay incorporating grammatical corrections and paraphrasing for improved clarity and impact.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="prose prose-sm sm:prose-base max-w-none dark:prose-invert whitespace-pre-wrap">
+                  {feedback.fullyParaphrasedEssay}
+                </p>
               </CardContent>
             </Card>
           )}

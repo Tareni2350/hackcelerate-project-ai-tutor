@@ -9,7 +9,6 @@ import { generateQuizFromTopic, type GenerateQuizFromTopicInput, type GenerateQu
 import { solvePhotoProblem, type SolvePhotoProblemInput, type SolvePhotoProblemOutput } from "@/ai/flows/solve-photo-problem-flow";
 import { checkEssay, type CheckEssayInput, type CheckEssayOutput } from "@/ai/flows/check-essay-flow";
 import { generateFlashcards, type GenerateFlashcardsInput, type GenerateFlashcardsOutput } from "@/ai/flows/generate-flashcards-flow";
-import { generateMindmap, type GenerateMindmapInput, type GenerateMindmapOutput, GenerateMindmapInputSchema } from "@/ai/flows/generate-mindmap-flow";
 
 
 export async function getRagExplanationAction(input: GenerateExplanationFromRagInput): Promise<GenerateExplanationFromRagOutput> {
@@ -58,13 +57,17 @@ export async function solvePhotoProblemAction(input: SolvePhotoProblemInput): Pr
 
 export async function checkEssayAction(input: CheckEssayInput): Promise<CheckEssayOutput> {
   try {
-    // Input for checkEssay is already validated by its own Zod schema in the flow
+    // Validate input with Zod schema before calling the AI flow
+    // This is just an example if CheckEssayInputSchema was exported and used here.
+    // For now, assuming the flow handles its own input validation as per its definition.
     const result = await checkEssay(input);
     return result;
   } catch (err) {
     console.error("Error in checkEssayAction:", err);
     if (err instanceof z.ZodError) {
-        throw new Error(`Essay validation failed: ${err.errors.map(e => e.message).join(', ')}`);
+      // Handle Zod validation errors specifically if needed
+      const validationErrors = err.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+      throw new Error(`Input validation failed: ${validationErrors}`);
     }
     const errorMessage = err instanceof Error ? err.message : String(err);
     throw new Error(`Failed to check essay. Details: ${errorMessage}`);
@@ -73,32 +76,11 @@ export async function checkEssayAction(input: CheckEssayInput): Promise<CheckEss
 
 export async function generateFlashcardsAction(input: GenerateFlashcardsInput): Promise<GenerateFlashcardsOutput> {
   try {
-    // Input for generateFlashcards is already validated by its own Zod schema in the flow
     const result = await generateFlashcards(input);
     return result;
   } catch (err) {
     console.error("Error in generateFlashcardsAction:", err);
-    if (err instanceof z.ZodError) {
-        throw new Error(`Flashcard input validation failed: ${err.errors.map(e => e.message).join(', ')}`);
-    }
     const errorMessage = err instanceof Error ? err.message : String(err);
     throw new Error(`Failed to generate flashcards. Details: ${errorMessage}`);
-  }
-}
-
-export async function generateMindmapAction(input: GenerateMindmapInput): Promise<GenerateMindmapOutput> {
-  try {
-    // The input schema is defined in the flow, but it's good practice to validate here if not already done by the form
-    // For Genkit flows with defined input schemas, this might be redundant if the form ensures valid data.
-    // const validatedInput = GenerateMindmapInputSchema.parse(input);
-    const result = await generateMindmap(input); // Pass validatedInput if parsing above
-    return result;
-  } catch (err) {
-    console.error("Error in generateMindmapAction:", err);
-    if (err instanceof z.ZodError) {
-        throw new Error(`Mind map input validation failed: ${err.errors.map(e => e.message).join(', ')}`);
-    }
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    throw new Error(`Failed to generate mind map. Details: ${errorMessage}`);
   }
 }

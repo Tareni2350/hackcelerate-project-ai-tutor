@@ -1,4 +1,3 @@
-
 // src/lib/actions.ts
 "use server";
 
@@ -6,6 +5,7 @@ import { generateExplanationFromRag, type GenerateExplanationFromRagInput, type 
 import { generateHumanLikeVoiceExplanation, type GenerateHumanLikeVoiceExplanationInput, type GenerateHumanLikeVoiceExplanationOutput } from "@/ai/flows/generate-human-like-voice-explanation";
 import { generateQuizFromTopic, type GenerateQuizFromTopicInput, type GenerateQuizFromTopicOutput } from "@/ai/flows/generate-quiz-from-topic";
 import { solvePhotoProblem, type SolvePhotoProblemInput, type SolvePhotoProblemOutput } from "@/ai/flows/solve-photo-problem-flow";
+import { checkEssay, type CheckEssayInput, type CheckEssayOutput } from "@/ai/flows/check-essay-flow";
 
 
 export async function getRagExplanationAction(input: GenerateExplanationFromRagInput): Promise<GenerateExplanationFromRagOutput> {
@@ -42,12 +42,4 @@ export async function solvePhotoProblemAction(input: SolvePhotoProblemInput): Pr
   try {
     const result = await solvePhotoProblem(input);
     return result;
-  } catch (error) {
-    console.error("Error in solvePhotoProblemAction:", error);
-    // Propagate a more user-friendly error or the original one if it's already informative
-    if (error instanceof Error) {
-      throw new Error(`Failed to solve photo problem: ${error.message}`);
-    }
-    throw new Error("An unknown error occurred while solving the photo problem.");
-  }
-}
+  } catch (error)

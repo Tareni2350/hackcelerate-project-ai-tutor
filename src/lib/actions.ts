@@ -9,6 +9,7 @@ import { generateQuizFromTopic, type GenerateQuizFromTopicInput, type GenerateQu
 import { solvePhotoProblem, type SolvePhotoProblemInput, type SolvePhotoProblemOutput } from "@/ai/flows/solve-photo-problem-flow";
 import { checkEssay, type CheckEssayInput, type CheckEssayOutput } from "@/ai/flows/check-essay-flow";
 import { generateFlashcards, type GenerateFlashcardsInput, type GenerateFlashcardsOutput } from "@/ai/flows/generate-flashcards-flow";
+import { generateMindmap, type GenerateMindmapInput, type GenerateMindmapOutput, GenerateMindmapInputSchema } from "@/ai/flows/generate-mindmap-flow";
 
 
 export async function getRagExplanationAction(input: GenerateExplanationFromRagInput): Promise<GenerateExplanationFromRagOutput> {
@@ -17,10 +18,8 @@ export async function getRagExplanationAction(input: GenerateExplanationFromRagI
     return result;
   } catch (err) {
     console.error("Error in getRagExplanationAction:", err);
-    if (err instanceof Error) {
-      throw new Error(`Failed to generate RAG explanation. Details: ${err.message}`);
-    }
-    throw new Error(`Failed to generate RAG explanation. Details: ${String(err) || "Unknown error"}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to generate RAG explanation. Details: ${errorMessage}`);
   }
 }
 
@@ -30,10 +29,8 @@ export async function getVoiceExplanationAction(input: GenerateHumanLikeVoiceExp
     return result;
   } catch (err) {
     console.error("Error in getVoiceExplanationAction:", err);
-     if (err instanceof Error) {
-      throw new Error(`Failed to generate voice explanation. Details: ${err.message}`);
-    }
-    throw new Error(`Failed to generate voice explanation. Details: ${String(err) || "Unknown error"}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to generate voice explanation. Details: ${errorMessage}`);
   }
 }
 
@@ -43,10 +40,8 @@ export async function generateQuizAction(input: GenerateQuizFromTopicInput): Pro
     return result;
   } catch (err) {
     console.error("Error in generateQuizAction:", err);
-    if (err instanceof Error) {
-      throw new Error(`Failed to generate quiz. Details: ${err.message}`);
-    }
-    throw new Error(`Failed to generate quiz. Details: ${String(err) || "Unknown error"}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to generate quiz. Details: ${errorMessage}`);
   }
 }
 
@@ -56,15 +51,14 @@ export async function solvePhotoProblemAction(input: SolvePhotoProblemInput): Pr
     return result;
   } catch (err) {
     console.error("Error in solvePhotoProblemAction:", err);
-     if (err instanceof Error) {
-      throw new Error(`Failed to solve photo problem. Details: ${err.message}`);
-    }
-    throw new Error(`Failed to solve photo problem. Details: ${String(err) || "Unknown error"}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to solve photo problem. Details: ${errorMessage}`);
   }
 }
 
 export async function checkEssayAction(input: CheckEssayInput): Promise<CheckEssayOutput> {
   try {
+    // Input for checkEssay is already validated by its own Zod schema in the flow
     const result = await checkEssay(input);
     return result;
   } catch (err) {
@@ -72,15 +66,14 @@ export async function checkEssayAction(input: CheckEssayInput): Promise<CheckEss
     if (err instanceof z.ZodError) {
         throw new Error(`Essay validation failed: ${err.errors.map(e => e.message).join(', ')}`);
     }
-    if (err instanceof Error) {
-      throw new Error(`Failed to check essay. Details: ${err.message}`);
-    }
-    throw new Error(`Failed to check essay. Details: ${String(err) || "Unknown error"}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to check essay. Details: ${errorMessage}`);
   }
 }
 
 export async function generateFlashcardsAction(input: GenerateFlashcardsInput): Promise<GenerateFlashcardsOutput> {
   try {
+    // Input for generateFlashcards is already validated by its own Zod schema in the flow
     const result = await generateFlashcards(input);
     return result;
   } catch (err) {
@@ -88,9 +81,24 @@ export async function generateFlashcardsAction(input: GenerateFlashcardsInput): 
     if (err instanceof z.ZodError) {
         throw new Error(`Flashcard input validation failed: ${err.errors.map(e => e.message).join(', ')}`);
     }
-    if (err instanceof Error) {
-      throw new Error(`Failed to generate flashcards. Details: ${err.message}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to generate flashcards. Details: ${errorMessage}`);
+  }
+}
+
+export async function generateMindmapAction(input: GenerateMindmapInput): Promise<GenerateMindmapOutput> {
+  try {
+    // The input schema is defined in the flow, but it's good practice to validate here if not already done by the form
+    // For Genkit flows with defined input schemas, this might be redundant if the form ensures valid data.
+    // const validatedInput = GenerateMindmapInputSchema.parse(input);
+    const result = await generateMindmap(input); // Pass validatedInput if parsing above
+    return result;
+  } catch (err) {
+    console.error("Error in generateMindmapAction:", err);
+    if (err instanceof z.ZodError) {
+        throw new Error(`Mind map input validation failed: ${err.errors.map(e => e.message).join(', ')}`);
     }
-    throw new Error(`Failed to generate flashcards. Details: ${String(err) || "Unknown error"}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to generate mind map. Details: ${errorMessage}`);
   }
 }

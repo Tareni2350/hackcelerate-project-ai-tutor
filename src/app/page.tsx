@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, Layers } from "lucide-react"; // Added Layers
+import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, Layers, BrainCircuit } from "lucide-react"; // Added Layers, BrainCircuit
 
 export default function HomePage() {
   const features = [
@@ -35,6 +35,13 @@ export default function HomePage() {
       cta: "Make Flashcards"
     },
     {
+      title: "Mind Map Generator",
+      description: "Visually organize complex topics with AI-generated mind maps, breaking down ideas into connected branches.",
+      icon: <BrainCircuit className="h-8 w-8 text-primary" />,
+      link: "/mindmap-generator",
+      cta: "Create a Mind Map"
+    },
+    {
       title: "Instant Photo Solver",
       description: "Stuck on a textbook problem? Snap a photo and get immediate, step-by-step explanations from your AI tutor.",
       icon: <Camera className="h-8 w-8 text-primary" />,
@@ -57,6 +64,14 @@ export default function HomePage() {
     }
   ];
 
+  // Adjust grid columns based on the number of features
+  const gridColsClass = features.length > 6 
+    ? "md:grid-cols-3 lg:grid-cols-4" 
+    : features.length > 4 
+    ? "md:grid-cols-3" 
+    : "md:grid-cols-2";
+
+
   return (
     <div className="container mx-auto py-8">
       <header className="mb-12 text-center">
@@ -66,7 +81,7 @@ export default function HomePage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className={`grid grid-cols-1 ${gridColsClass} gap-8`}>
         {features.map((feature) => (
           <Card key={feature.title} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-start gap-4 pb-4">

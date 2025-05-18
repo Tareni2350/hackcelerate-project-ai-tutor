@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '@/components/ui/sidebar'; 
-import { LayoutDashboard, Brain, Volume2, Lightbulb, Archive, Camera, FileText, Layers, type Icon } from 'lucide-react'; // Added Layers
+import { LayoutDashboard, Brain, Volume2, Lightbulb, Archive, Camera, FileText, Layers, BrainCircuit, type Icon } from 'lucide-react'; // Added Layers, BrainCircuit
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/voice-tutoring', label: 'Voice Tutor', icon: Volume2 },
   { href: '/quiz-generator', label: 'Quiz Generator', icon: Lightbulb },
   { href: '/flashcard-generator', label: 'Flashcard Generator', icon: Layers },
+  { href: '/mindmap-generator', label: 'Mind Map Generator', icon: BrainCircuit },
   { href: '/photo-solver', label: 'Photo Solver', icon: Camera },
   { href: '/essay-checker', label: 'Essay Checker', icon: FileText },
   { href: '/offline-cache', label: 'Offline Cache', icon: Archive },

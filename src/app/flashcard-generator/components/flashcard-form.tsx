@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Wand2, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -15,9 +16,12 @@ import { generateFlashcardsAction } from "@/lib/actions";
 import type { GenerateFlashcardsOutput } from "@/ai/flows/generate-flashcards-flow";
 import { cn } from "@/lib/utils";
 
+const difficultyLevels = ["Basic", "Intermediate", "Advanced"] as const;
+
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Topic must be at least 3 characters." }).max(150, { message: "Topic cannot exceed 150 characters." }),
   numFlashcards: z.coerce.number().min(1, {message: "Must generate at least 1 flashcard."}).max(15, {message: "Cannot generate more than 15 flashcards."}).optional().default(5),
+  difficultyLevel: z.enum(difficultyLevels).optional().default("Basic"),
 });
 
 type FlashcardFormValues = z.infer<typeof formSchema>;
@@ -38,6 +42,7 @@ export function FlashcardForm() {
     defaultValues: {
       topic: "",
       numFlashcards: 5,
+      difficultyLevel: "Basic",
     },
   });
 
@@ -55,7 +60,7 @@ export function FlashcardForm() {
       );
       toast({
         title: "Flashcards Generated!",
-        description: `Your flashcards on "${data.topic}" are ready.`,
+        description: `Your flashcards on "${data.topic}" (${data.difficultyLevel}) are ready.`,
       });
     } catch (err) {
       console.error("Flashcard generation error:", err);
@@ -96,20 +101,47 @@ export function FlashcardForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="numFlashcards"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Number of Flashcards</FormLabel>
-                <FormControl>
-                  <Input type="number" min="1" max="15" {...field} />
-                </FormControl>
-                <FormDescription>Between 1 and 15 flashcards.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="numFlashcards"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Number of Flashcards</FormLabel>
+                  <FormControl>
+                    <Input type="number" min="1" max="15" {...field} />
+                  </FormControl>
+                  <FormDescription>Between 1 and 15 flashcards.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="difficultyLevel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Difficulty Level</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {difficultyLevels.map((level) => (
+                        <SelectItem key={level} value={level}>
+                          {level}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Choose the appropriate difficulty.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <Button type="submit" disabled={isLoading} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

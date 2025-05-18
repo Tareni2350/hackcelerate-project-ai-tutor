@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow that generates personalized explanations based on relevant educational resources using RAG.
@@ -48,6 +49,10 @@ const generateExplanationFromRagFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (!output) {
+      console.error("generateExplanationFromRagFlow: AI prompt did not return a valid output for the given input.", {input});
+      throw new Error("The AI was unable to generate an explanation. The prompt might have failed or returned an empty response.");
+    }
+    return output;
   }
 );

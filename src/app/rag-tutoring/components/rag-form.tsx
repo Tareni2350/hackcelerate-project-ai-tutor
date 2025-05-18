@@ -123,7 +123,7 @@ export function RagForm() {
           </CardHeader>
           <CardContent>
             <div className="prose prose-sm sm:prose-base max-w-none dark:prose-invert whitespace-pre-wrap">
-              {explanation.explanation}
+              {explanation.explanation.replace(/^\*+|\*+$/g, '').trim()}
             </div>
           </CardContent>
         </Card>
@@ -131,4 +131,3 @@ export function RagForm() {
     </div>
   );
 }
-

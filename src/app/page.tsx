@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera, Archive, FileText } from "lucide-react";
+import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, History } from "lucide-react";
 
 export default function HomePage() {
   const features = [
@@ -41,6 +41,13 @@ export default function HomePage() {
       link: "/essay-checker",
       cta: "Review Your Essay"
     },
+     {
+      title: "Learning History",
+      description: "Review your past interactions, track your learning journey, and revisit previous explanations and quizzes.",
+      icon: <History className="h-8 w-8 text-primary" />,
+      link: "/history",
+      cta: "View Your History"
+    },
     {
       title: "Offline Learning Access",
       description: "Access key educational content and solved examples even without an internet connection, ensuring your learning never stops.",
@@ -63,9 +70,11 @@ export default function HomePage() {
         {features.map((feature) => (
           <Card key={feature.title} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-start gap-4 pb-4">
-              {feature.icon}
+               <div className="p-2 bg-primary/10 rounded-md flex-shrink-0">
+                {feature.icon}
+              </div>
               <div>
-                <CardTitle className="text-2xl">{feature.title}</CardTitle>
+                <CardTitle className="text-xl">{feature.title}</CardTitle> 
                 <CardDescription className="text-md mt-1">{feature.description}</CardDescription>
               </div>
             </CardHeader>

@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, Layers, BrainCircuit } from "lucide-react"; // Added Layers, BrainCircuit
+import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, Layers } from "lucide-react"; // Removed BrainCircuit
 
 export default function HomePage() {
   const features = [
@@ -34,13 +34,13 @@ export default function HomePage() {
       link: "/flashcard-generator",
       cta: "Make Flashcards"
     },
-    {
-      title: "Mind Map Generator",
-      description: "Visually organize complex topics with AI-generated mind maps, breaking down ideas into connected branches.",
-      icon: <BrainCircuit className="h-8 w-8 text-primary" />,
-      link: "/mindmap-generator",
-      cta: "Create a Mind Map"
-    },
+    // {
+    //   title: "Mind Map Generator",
+    //   description: "Visually organize complex topics with AI-generated mind maps, breaking down ideas into connected branches.",
+    //   icon: <BrainCircuit className="h-8 w-8 text-primary" />, // Verified as removed
+    //   link: "/mindmap-generator",
+    //   cta: "Create a Mind Map"
+    // },
     {
       title: "Instant Photo Solver",
       description: "Stuck on a textbook problem? Snap a photo and get immediate, step-by-step explanations from your AI tutor.",

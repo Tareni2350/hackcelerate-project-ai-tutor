@@ -8,4 +8,4 @@ import '@/ai/flows/generate-quiz-from-topic.ts';
 import '@/ai/flows/solve-photo-problem-flow.ts';
 import '@/ai/flows/check-essay-flow.ts';
 import '@/ai/flows/generate-flashcards-flow.ts';
-import '@/ai/flows/generate-mindmap-flow.ts'; // Added new flow
+// Removed import for generate-mindmap-flow.ts

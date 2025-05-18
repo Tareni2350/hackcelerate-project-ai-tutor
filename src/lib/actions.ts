@@ -1,4 +1,3 @@
-
 // src/lib/actions.ts
 "use server";
 
@@ -57,15 +56,11 @@ export async function solvePhotoProblemAction(input: SolvePhotoProblemInput): Pr
 
 export async function checkEssayAction(input: CheckEssayInput): Promise<CheckEssayOutput> {
   try {
-    // Validate input with Zod schema before calling the AI flow
-    // This is just an example if CheckEssayInputSchema was exported and used here.
-    // For now, assuming the flow handles its own input validation as per its definition.
     const result = await checkEssay(input);
     return result;
   } catch (err) {
     console.error("Error in checkEssayAction:", err);
     if (err instanceof z.ZodError) {
-      // Handle Zod validation errors specifically if needed
       const validationErrors = err.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
       throw new Error(`Input validation failed: ${validationErrors}`);
     }

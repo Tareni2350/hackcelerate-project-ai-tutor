@@ -37,6 +37,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning><head>{/* The manifest link is automatically added by Next.js via metadata.manifest */}</head><body className={`${geistSans.variable} ${geistMono.variable} antialiased`}><ThemeProvider><ServiceWorkerRegistrar /><AppLayout>{children}</AppLayout><Toaster /></ThemeProvider></body></html>
+    <html lang="en" suppressHydrationWarning><head></head><body className={`${geistSans.variable} ${geistMono.variable} antialiased`}><ThemeProvider><ServiceWorkerRegistrar /><AppLayout>{children}</AppLayout><Toaster /></ThemeProvider></body></html>
   );
 }

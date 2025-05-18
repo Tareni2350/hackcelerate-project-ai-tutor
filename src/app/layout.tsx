@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>{/* Removed leading whitespace here */}
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* The manifest link is automatically added by Next.js via metadata.manifest */}
       </head>

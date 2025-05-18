@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Brain, Volume2, Gamepad2, Camera, Archive, FileText, History } from "lucide-react";
+import { Brain, Volume2, Gamepad2, Camera, Archive, FileText } from "lucide-react";
 
 export default function HomePage() {
   const features = [
@@ -40,13 +40,6 @@ export default function HomePage() {
       icon: <FileText className="h-8 w-8 text-primary" />,
       link: "/essay-checker",
       cta: "Review Your Essay"
-    },
-     {
-      title: "Learning History",
-      description: "Review your past interactions, track your learning journey, and revisit previous explanations and quizzes.",
-      icon: <History className="h-8 w-8 text-primary" />,
-      link: "/history",
-      cta: "View Your History"
     },
     {
       title: "Offline Learning Access",
